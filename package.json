@@ -1,0 +1,23 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "`Some function may can helpful`",
+  "main": "function.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CongMinh77/javascript-function.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CongMinh77/javascript-function/issues"
+  },
+  "homepage": "https://github.com/CongMinh77/javascript-function#readme",
+  "dependencies": {
+    "exceljs": "^4.4.0"
+  }
+}
