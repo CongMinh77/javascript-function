@@ -1,6 +1,8 @@
 const ExcelJS = require('exceljs');
 
-async function createMoodTracker() {
+const YEAR = process.argv[2] ? parseInt(process.argv[2]) : new Date().getFullYear();
+
+async function createMoodTracker(year) {
     const workbook = new ExcelJS.Workbook();
     workbook.creator = 'Mood Tracker';
     workbook.created = new Date();
@@ -27,7 +29,7 @@ async function createMoodTracker() {
         return new Date(year, month, 1).getDay();
     }
 
-    const ws = workbook.addWorksheet('2025 Mood', {
+    const ws = workbook.addWorksheet(`${year} Mood`, {
         views: [{ showGridLines: false }]
     });
 
@@ -37,7 +39,7 @@ async function createMoodTracker() {
     }
 
     const titleCell = ws.getCell('A1');
-    titleCell.value = '2025 mood';
+    titleCell.value = `${year} mood`;
     titleCell.font = { size: 24, bold: true, color: { argb: '000080' } };
     ws.mergeCells('A1:G1');
 
@@ -79,8 +81,8 @@ async function createMoodTracker() {
             };
         }
 
-        const daysInMonth = getDaysInMonth(2025, monthIndex);
-        const firstDay = getFirstDayOfMonth(2025, monthIndex);
+        const daysInMonth = getDaysInMonth(year, monthIndex);
+        const firstDay = getFirstDayOfMonth(year, monthIndex);
         
         let currentDay = 1;
         for (let week = 0; week < 6; week++) {
@@ -242,10 +244,10 @@ async function createMoodTracker() {
     
     let rowNum = 2;
     for (let month = 0; month < 12; month++) {
-        const daysInMonth = getDaysInMonth(2025, month);
+        const daysInMonth = getDaysInMonth(year, month);
         for (let day = 1; day <= daysInMonth; day++) {
-            const dateStr = `${2025}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            dataWs.getCell(`A${rowNum}`).value = new Date(2025, month, day);
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            dataWs.getCell(`A${rowNum}`).value = new Date(year, month, day);
             dataWs.getCell(`A${rowNum}`).numFmt = 'YYYY-MM-DD';
             
             dataWs.getCell(`B${rowNum}`).dataValidation = {
@@ -265,7 +267,7 @@ async function createMoodTracker() {
         views: [{ showGridLines: true }]
     });
 
-    summaryWs.getCell('A1').value = 'My 2025 Mood Summary';
+    summaryWs.getCell('A1').value = `My ${year} Mood Summary`;
     summaryWs.getCell('A1').font = { size: 18, bold: true, color: { argb: '4472C4' } };
     summaryWs.mergeCells('A1:E1');
 
@@ -295,7 +297,7 @@ async function createMoodTracker() {
     
     monthShortNames.forEach((month, idx) => {
         const row = idx + 4;
-        const daysInMonth = getDaysInMonth(2025, idx);
+        const daysInMonth = getDaysInMonth(year, idx);
         const dataRowEnd = dataRowStart + daysInMonth - 1;
         
         summaryWs.getCell(`A${row}`).value = month;
@@ -334,7 +336,7 @@ async function createMoodTracker() {
         views: [{ showGridLines: false }]
     });
 
-    instructionWs.getCell('A1').value = 'Hướng dẫn sử dụng - Mood Tracker 2025';
+    instructionWs.getCell('A1').value = `Hướng dẫn sử dụng - Mood Tracker ${year}`;
     instructionWs.getCell('A1').font = { size: 18, bold: true, color: { argb: '4472C4' } };
     instructionWs.mergeCells('A1:E1');
 
@@ -344,7 +346,7 @@ async function createMoodTracker() {
         '1. Mở sheet "Mood Data" để nhập tâm trạng hàng ngày',
         '2. Chọn mood từ dropdown list: top, up, tranquil, empty, down',
         '3. Xem thống kê tại sheet "Summary"',
-        '4. Lịch tổng quan tại sheet "2025 Mood"',
+        `4. Lịch tổng quan tại sheet "${year} Mood"`,
         '',
         'Ý nghĩa các mood:',
         '• top (hồng) - Tâm trạng tuyệt vời nhất',
@@ -371,8 +373,9 @@ async function createMoodTracker() {
 
     instructionWs.getColumn('A').width = 50;
 
-    await workbook.xlsx.writeFile('/workspace/2025_Mood_Tracker.xlsx');
-    console.log('File đã được tạo thành công: 2025_Mood_Tracker.xlsx');
+    const fileName = `${year}_Mood_Tracker.xlsx`;
+    await workbook.xlsx.writeFile(`/workspace/${fileName}`);
+    console.log(`File đã được tạo thành công: ${fileName}`);
 }
 
-createMoodTracker().catch(console.error);
+createMoodTracker(YEAR).catch(console.error);
